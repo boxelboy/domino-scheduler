@@ -1,0 +1,38 @@
+<div class="modals-container">
+    <div class="bbm-wrapper warning" style="display: block;">
+        <div class="bbm-modal bbm-modal--open" style="opacity: 1;">
+            <div class="bbm-modal__topbar">
+                <h3 class="bbm-modal__title">Clash Report</h3>
+                <h2 class="bbm-modal__title">This change could not save, please correct the clashs and try again.</h2>
+            </div>
+            <div class="bbm-modal__section">
+            	<form>
+	               <% _.each(data.data, function(error) { %>
+                    	<div class="headError">
+                    		<div class="row">
+                    			<div class="col-sm-4">
+                    				<h4><label>Schedule</label> <%= error.schedule_id %> </h4>
+                    				<h4><label>Start Date</label> <%= error.schedule_start_date %> </h4>
+                    				<h4><label>End Date</label> <%= error.schedule_end_date %> </h4>
+                    			</div>
+                    			<div class="col-sm-2">
+                    				<h4><label style="width:100%">Resource Clashes</label></h4>
+                    			</div>
+                    			<div class="col-sm-6">
+                    				<ul class="resourceList">
+                    				  <% _.each(error.resource_clashs, function(clash) { %>
+                    					<li><%= clash %></li>
+                    					<% }); %>
+                    				</ul>
+                    			</div>
+                    		</div>
+                    	</div>
+                    <% }); %>
+                </form>
+            </div>
+            <div class="bbm-modal__bottombar">
+                <a href="" class="bbm-button closeModal">Close</a>
+            </div>
+        </div>
+    </div>
+</div>

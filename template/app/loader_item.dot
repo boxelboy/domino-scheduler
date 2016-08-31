@@ -1,0 +1,6 @@
+{{? it.loading }}
+    <i class="fa fa-spinner fa-spin"></i>
+{{??}}
+    <i class="fa fa-check"></i>
+{{?}}
+{{= it.label }}

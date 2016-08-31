@@ -1,0 +1,43 @@
+<app>
+<index>index.html</index>
+<functions>
+    <function>
+        <name>Scheduler</name>
+        <type>url</type>
+        <url><![CDATA[view/]]></url>
+        <parameters>
+        </parameters>
+    </function>
+    <function>
+        <name>Scheduler_With_Filter_Contact_Client</name>
+        <type>url</type>
+        <url><![CDATA[view/$$view$$/$$type$$/$$filterId$$/$$contactId$$/$$clientContactId$$]]></url>
+        <parameters>
+            <parameter>view</parameter>
+            <parameter>type</parameter>
+            <parameter>filterId</parameter>
+            <parameter>contactId</parameter>
+            <parameter>clientContactId</parameter>
+        </parameters>
+    </function>
+    <function>
+        <name>Scheduler_With_Filter</name>
+        <type>url</type>
+        <url><![CDATA[view/$$view$$/$$type$$/$$filterId$$]]></url>
+        <parameters>
+            <parameter>view</parameter>
+            <parameter>type</parameter>
+            <parameter>filterId</parameter>
+        </parameters>
+    </function>
+    <function>
+        <name>Scheduler_Type</name>
+        <type>url</type>
+        <url><![CDATA[view/$$view$$/$$type$$]]></url>
+        <parameters>
+            <parameter>view</parameter>
+            <parameter>type</parameter>
+        </parameters>
+    </function>
+</functions>
+</app>

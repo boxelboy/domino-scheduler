@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    </head>
+    <body>
+    </body>
+
+    <script>
+    	 function loadFile(filename, filetype, data) {
+			var fileref;
+			if (filetype == "js") {
+			    fileref = document.createElement('script');
+			    fileref.setAttribute("type", "text/javascript");
+			    fileref.setAttribute("src", filename);
+			    fileref.setAttribute("data-main", data);
+			}
+			else if (filetype == "css") { //if filename is an external CSS file
+			    fileref = document.createElement("link");
+			    fileref.setAttribute("rel", "stylesheet");
+			    fileref.setAttribute("type", "text/css");
+			    fileref.setAttribute("href", filename);
+			}
+			if (typeof fileref != "undefined"){
+				document.getElementsByTagName("head")[0].appendChild(fileref);
+			}
+		}
+
+    	var array = window.location.href.split('/'),
+    		appName = array[4];
+    	loadFile('/app/' + appName + '/css/jquery-ui.css', 'css');
+    	loadFile('/app/' + appName + '/css/styles.css', 'css');
+    	loadFile('/app/' + appName + '/lib/require.js', 'js', "/app/" + appName + "/app/app");
+    </script>
+</html>

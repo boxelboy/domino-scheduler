@@ -1,0 +1,188 @@
+<div class="modals-container">
+    <div class="bbm-wrapper" style="display: block;">
+        <div class="bbm-modal bbm-modal--open" style="opacity: 1;">
+            <div class="bbm-modal__topbar">
+                <h3 class="bbm-modal__title">Edit Event 
+                <span style="float:right">Schedule ID : <%= schedule.get('id') %><br>
+				<% if(job) { %>
+					<span style="float:right;margin-top: 10px;">Job ID : <span class="jobNumber"><%= job.get('id') %></span></span>
+	   			<% } %>
+                </h3>
+            </div>
+
+
+            <div class="bbm-modal__section">
+            	<ul style="margin-bottom: 20px" class="nav nav-tabs" role="tablist">
+					<li class="active"><a data-key="details" href="#">Schedule Details</a></li>
+					<li><a data-key="jobs" href="#">Job</a></li>
+					<li><a data-key="customer" href="#">Customers</a></li>
+					<li><a data-key="resources" href="#">Resources</a></li>
+				</ul>
+				<div class="tabSection details active">
+	            	<form>
+		                <div class="col-md-6">
+		                    <label for="description">Description</label>
+		                    <textarea  name="description" class="form-control" rows="4"><%= schedule.get('booked_for') %></textarea>
+		                </div>
+		                <div class="col-md-6">
+		                    <label for="description">Start Date</label>
+		                    <div style="clear:both"></div>
+		                    <input type="text" name="start_date" class="form-control halfWidth" value="<%= schedule.get('start_uk_date') %>">
+		                    <input type="text" name="start_time" class="form-control halfWidth" value="<%= schedule.get('start_time') %>">
+
+
+		                    <label for="description">End Date</label>
+		                    <div style="clear:both"></div>
+		                    <input type="text" name="end_date" class="form-control halfWidth" value="<%= schedule.get('end_uk_date') %>">
+		                    <input type="text" name="end_time" class="form-control halfWidth" value="<%= schedule.get('end_time') %>">
+		                </div>
+	                </form>
+                </div>
+                <div class="tabSection jobs">
+                	   <div class="col-md-12 jobHide">
+
+					      
+
+                	   		<div class="createJobBox">
+			                    <label for="description">Job Description</label>
+			                    <div style="clear:both"></div>
+			                    <input type="text" name="job_description" class="form-control ">
+								
+
+								<label for="description">Job Type</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control settingsJobType">
+			                     <% _.each(settings.job_type, function(setting) { %>
+										<option value="<%= setting %>"><%= setting %></option>
+								 <% }); %>
+		                         </select>
+
+		                        <label for="description">Job Stage</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control settingsJobStage">
+			                     <% _.each(settings.job_stage, function(setting) { %>
+										<option value="<%= setting %>"><%= setting %></option>
+								 <% }); %>
+		                         </select>
+			                    <button type="button" class="btn btn-warning submitJob">Submit Job</button>
+                	   		</div>
+
+                	   		  <button type="button" class="btn btn-success selectJob">Select Job</button>
+
+						        <div class="jobSelectHide">
+		                	   		<select class="form-control jobSelect">
+		                	   			<option value="default">Please select...</option>
+		                	   			<% if(job) { %>
+		                	   				<option selected value="<%= job.get('id') %>"><%= job.get('description') %> | <%= job.get('id') %></option>
+		                	   			<% } %>
+						    			<% _.each(jobs.models, function(item) { %>
+						    				<% if(item.get('description') != "") { %>
+												<option  value="<%= item.get('id') %>"><%= item.get('description') %> | <%= item.get('id') %></option>
+											<% } %>
+							        	<% }); %>
+							        </select>
+						        </div>
+                	   </div>
+                </div>
+				<div class="tabSection customer">
+                   <div class="col-md-12 customerHide">
+		                    <table class="table table-striped customers">
+		                        <thead>
+		                            <tr>
+		                                <th class="col-sm-10">Customer</th>
+		                                <th class="col-sm-2">Tools</th>
+		                            </tr>
+		                        </thead>
+		                        <tbody>
+		                            <% _.each(currentclientcontacts.models, function(client) { %>
+		                            <tr class="loopedElementsClients">
+		                                <td><%= client.get('resource_company') %></td>
+		                                <td>
+		                                  	<div class="btn-group">
+	                                        	<button type="button" data-id="<%= client.get('id') %>" class="btn btn-danger deleteClient">Delete</button>
+	                                    	</div>
+		                                </td>
+		                            </tr>
+		                            <% }); %>
+		                            <tr>
+		                                <td>
+				                        	<select class="form-control stepClient">
+				                            	<option value="default">Please select...</option>
+								    			<% _.each(clientcontacts.models, function(client) { %>
+												<option value="<%= client.get('id') %>" data-name='<%= client.get('company_name') %>'><%= client.get('company_name') %> | <%= client.get('full_name') %></option>
+									        	<% }); %>
+									        </select>
+		                                </td>
+		                                <td>
+		                                    <div class="btn-group">
+		                                        <button type="button"  class="btn btn-success addClient">Add</button>
+		                                    </div>
+		                                </td>
+		                            </tr>
+		                        </tbody>
+		                   </table>
+		            </div>
+		        </div>
+                <div class="tabSection resources">
+	                <div class="col-md-12">
+	                    <table class="table table-striped">
+	                        <thead>
+	                            <tr>
+	                                <th class="col-sm-8">Resource Name</th>
+	                                <th class="col-sm-2">Event</th>
+	                                <th class="col-sm-2">Tools</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <% _.each(resources, function(resource) { %>
+	                            <tr class="loopedElements">
+	                                <td>
+	                                    <%= resource.related('participants:resource').get('name') %>
+	                                </td>
+	                                <td><%= resource.get('event_name') %></td>
+	                                <td>
+	                                    <div class="btn-group">
+	                                        <button type="button" data-id="<%= resource.get('id') %>" data-resourceId="<%= resource.related('participants:resource').get('id') %>" class="btn btn-danger deleteParticipants">Delete</button>
+	                                    </div>
+	                                </td>
+	                            </tr>
+	                            <% }); %>
+	                            <tr>
+	                                <td>
+			                        	<select class="form-control stepResource">
+			                            	<% _.each(categories, function(category) { %>
+			                            		<optgroup label="<%= category %>">
+													<% _.each(allresources, function(resource) { %>
+					                            		<% if(resource.related('resources:resource_category').get('name') == category) { %>
+															<option value="<%= resource.get('id') %>"><%= resource.get('name') %></option>
+														<% } %>
+										        	<% }); %>
+									        	</optgroup>
+			                            	<% }); %>
+								        </select>
+	                                </td>
+	                                <td>
+	                                	<select class="form-control stepRoles">
+
+								        </select>
+	                                </td>
+	                                <td>
+	                                    <div class="btn-group">
+	                                        <button type="button" data-id="" class="btn btn-success addResource">Add</button>
+	                                    </div>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+                </div>
+                <div class="tabSection customer">
+
+                </div>
+            </div>
+            <div class="bbm-modal__bottombar">
+                <a href="" class="bbm-button saveModal">Save</a> | <a href="" class="bbm-button deleteModal">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>

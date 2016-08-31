@@ -1,0 +1,478 @@
+<div class="modals-container">
+    <div class="bbm-wrapper" style="display: block;">
+        <div class="bbm-modal bbm-modal--open" style="opacity: 1;">
+            <div class="bbm-modal__topbar">
+                <h3 class="bbm-modal__title">Edit Event
+					<% if(job) { %>
+						<span class="jobLink" data-id="<%= job.get('id') %>" style="float:right;margin-top: 10px;">Job ID : <span class="jobNumber"><%= job.get('id') %></span></span>
+		   			<% } %>
+                </h3>
+            </div>
+
+            <div class="bbm-modal__section">
+            	<ul style="margin-bottom: 20px" class="nav nav-tabs" role="tablist">
+					<li class="active"><a data-key="details" href="#">Schedule Details</a></li>
+					<li><a data-key="jobs" href="#">Job</a></li>
+					<li><a data-key="resources" href="#">Resources</a></li>
+					<% if(!_.isEmpty(schedule.related('schedules:schedules_additional').models)) { %>
+						<li><a data-key="additional" href="#">Additional</a></li>
+					<% } %>
+					<% if(schedule.related('schedules:job').related('jobs:client').has('id')) { %>
+						<li><a data-key="contact" href="#">Client Details</a></li>
+					<% } %>
+				</ul>
+
+				<div class="tabSection details active">
+	            	<form>
+		                <div class="col-md-6">
+		                    <label for="description">Description</label>
+		                    <textarea  name="description" class="form-control" rows="4"><%= schedule.get('booked_for') %></textarea>
+		                </div>
+		                <div class="col-md-6">
+		                    <label for="description">Start Date</label>
+		                    <div style="clear:both"></div>
+		                    <input type="text" name="start_date" class="form-control halfWidth" value="<%= schedule.get('start_uk_date') %>">
+		                    <input type="text" name="start_time" class="form-control halfWidth" value="<%= schedule.get('start_time') %>">
+
+
+		                    <label for="description">End Date</label>
+		                    <div style="clear:both"></div>
+		                    <input type="text" name="end_date" class="form-control halfWidth" value="<%= schedule.get('end_uk_date') %>">
+		                    <input type="text" name="end_time" class="form-control halfWidth" value="<%= schedule.get('end_time') %>">
+		                </div>
+	                </form>
+            		<% if(schedule.related('schedules:job').related('jobs:sales_order').has('id')) { %>
+            			  <div class="col-md-12">
+        			  			<h2 style="font-size:20px">Line Items</h2>
+            			  		<table class="table">
+								    <thead>
+								      <tr>
+								        <th>STK Code</th>
+								        <th>Qty</th>
+								        <th>Description</th>
+								        
+								      </tr>
+								    </thead>
+								    <tbody>
+								    	<% _.each(schedule.related('schedules:job').related('jobs:sales_order').related('sales_orders:line_items').models, function(lineitem) { %>
+					             			<tr>
+					             				<td>
+					             					<%= lineitem.get('stk_code') %>
+					             				</td>
+					             				<td>
+					             					<%= lineitem.get('qty') %>
+					             				</td>
+					             				<td>
+					             					<%= lineitem.get('description') %>
+					             				</td>
+					             				
+					             			</tr>
+		            			  	    <% }); %>
+								    </tbody>
+								  </table>
+            			  </div>
+            		<% } %>
+                </div>
+                <div class="tabSection jobs">
+                	   <div class="col-md-12 jobHide">
+                	   		<button type="button" class="btn btn-success createJob">Create Job</button>
+                	   		<button type="button" class="btn btn-success selectJob">Select Job</button>
+                	   		<div class="createJobBox">
+								<label for="description">Job Type</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control settingsJobType">
+			                     <% _.each(settings.job_type, function(setting) { %>
+										<option value="<%= setting %>"><%= setting %></option>
+								 <% }); %>
+		                         </select>
+
+		                        <label for="description">Job Stage</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control settingsJobStage">
+			                     <% _.each(settings.job_stage, function(setting) { %>
+										<option value="<%= setting %>"><%= setting %></option>
+								 <% }); %>
+		                         </select>
+
+		                        <label for="description">Client</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control clients">
+			                    <option value="default">Please select...</option>
+			                     <% _.each(clients.models, function(client) { %>
+										<option value="<%= client.get('id') %>"><%= client.get('alias') %></option>
+								 <% }); %>
+		                         </select>
+
+		                        <label for="description">Contracts</label>
+			                    <div style="clear:both"></div>
+			                    <select class="form-control contracts">
+		                        </select>
+			                    <button type="button" class="btn btn-warning submitJob">Submit Job</button>
+                	   		</div>
+
+					        <div class="jobSelectHide">
+					        	<label for="showAll">Only show jobs that are unscheduled</label>
+					        	<input type="checkbox" class="checkboxJobs" name="showAll">
+	                	   		<select class="form-control jobSelect">
+	                	   			<option value="default">Please select...</option>
+	                	   			<% if(job) { %>
+	                	   				<option selected value="<%= job.get('id') %>"><%= job.get('description') %> | <%= job.get('id') %></option>
+	                	   			<% } %>
+					    			<% _.each(jobs.models, function(item) { %>
+					    				<% if(item.get('description') != "") { %>
+											<option <% if(item.related('jobs:schedules').length == 0) {  %> class="unscheduledSelect"  <% } else { %> class="scheduledSelect"  <% } %> value="<%= item.get('id') %>"><%= item.get('description') %> | <%= item.get('id') %></option>
+										<% } %>
+						        	<% }); %>
+						        </select>
+					        </div>
+                	   </div>
+                </div>
+
+                <div class="tabSection resources">
+	                <div class="col-md-12">
+	                    <table class="table table-striped">
+	                        <thead>
+	                            <tr>
+	                                <th class="col-sm-8">Resource Name</th>
+	                                <th class="col-sm-2">Event</th>
+	                                <th class="col-sm-2"></th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                            <% _.each(resources, function(resource) { %>
+	                            <tr class="loopedElements">
+	                                <td>
+	                                    <%= resource.related('participants:resource').get('name') %>
+	                                </td>
+	                                <td>
+	                                	<div class="resourceEventText"><%= resource.get('event_name') %> <i  data-participant="<%=resource.get('id') %>" data-roleId='<%= resource.get('role_id') %>' data-id='<%= resource.get('resource_id') %>' class="fa fa-pencil-square-o"></i></div>
+	                                	<div style="display:none" class="resourceEventSelect">
+	                                		<select class="form-control">
+
+								       	 	</select>
+	                                	</div>
+	                                </td>
+	                                <td>
+	                                    <div class="btn-group">
+	                                        <button type="button" data-id="<%= resource.get('id') %>" data-resourceId="<%= resource.related('participants:resource').get('id') %>" class="btn btn-danger deleteParticipants">Delete</button>
+	                                    </div>
+	                                </td>
+	                            </tr>
+	                            <% }); %>
+	                            <tr>
+	                                <td>
+			                        	<select class="form-control stepResource">
+			                        		<option selected value="">Please select a resource</option>
+			                            	<% _.each(categories, function(category) { %>
+
+			                            		<optgroup label="<%= category %>">
+													<% _.each(allresources, function(resource) { %>
+					                            		<% if(resource.related('resources:resource_category').get('name') == category) { %>
+															<option value="<%= resource.get('id') %>"><%= resource.get('name') %></option>
+														<% } %>
+										        	<% }); %>
+									        	</optgroup>
+			                            	<% }); %>
+								        </select>
+	                                </td>
+	                                <td>
+	                                	<select class="form-control stepRoles">
+								        </select>
+	                                </td>
+	                                <td>
+	                                    <div class="btn-group">
+	                                        <button type="button" data-id="" class="btn btn-success addResource">Add Resource</button>
+	                                    </div>
+	                                </td>
+	                            </tr>
+	                        </tbody>
+	                    </table>
+	                </div>
+                </div>
+
+                <div class="tabSection contact">
+						<% if(schedule.related('schedules:job').related('jobs:client').has('id')) { %>
+                			<div class="row">
+		                		<div class="col-md-8">
+								    <div class="widget widget-green">
+								        <h2>
+								            <i class="fa fa-th-list"></i>
+								            Details
+								        </h2>
+								        <div class="details">
+								        	<% if(schedule.related('schedules:job').related('jobs:client').has('id')) { %>
+									            <div>
+									                <div>
+									                    Account Number
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('id') %>
+									                </div>
+									            </div>
+								            <% } %>
+											<% if(schedule.related('schedules:job').related('jobs:client').has('account_status')) { %>
+									            <div>
+									                <div>
+									                    Account Status
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('account_status') %>
+									                </div>
+									            </div>
+								            <% } %>
+
+								            <% if(schedule.related('schedules:job').related('jobs:client').has('company_name')) { %>
+									            <div>
+									                <div>
+									                    Company Name
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('company_name') %>
+									                </div>
+									            </div>
+								            <% } %>
+								             <% if(schedule.related('schedules:job').related('jobs:client').has('alias')) { %>
+									            <div>
+									                <div>
+									                    Alias
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('alias') %>
+									                </div>
+									            </div>
+								            <% } %>
+								            <% if(schedule.related('schedules:job').related('jobs:client').has('email')) { %>
+									            <div>
+									                <div>
+									                    Email
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('email') %>
+									                </div>
+									            </div>
+								            <% } %>
+
+								            <% if(schedule.related('schedules:job').related('jobs:client').has('phone')) { %>
+									            <div>
+									                <div>
+									                    Phone
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('phone') %>
+									                </div>
+									            </div>
+								            <% } %>
+								        </div>
+								    </div>
+								</div>
+
+								<div class="col-md-4">
+								    <div class="widget widget widget-green">
+								        <h2>
+								            <i class="fa fa-th-list"></i>
+								            Address
+								        </h2>
+								        <div class="details">
+
+								         <% if(schedule.related('schedules:job').related('jobs:client').has('address_main_name')) { %>
+									            <div>
+									                <div>
+									                    Name
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('address_main_name') %>
+									                </div>
+									            </div>
+								            <% } %>
+
+								        	<% if(schedule.related('schedules:job').related('jobs:client').has('address_main_street')) { %>
+									            <div>
+									                <div>
+									                    Street
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('address_main_street') %>
+									                </div>
+									            </div>
+								            <% } %>
+											<% if(schedule.related('schedules:job').related('jobs:client').has('address_main_post_town')) { %>
+									            <div>
+									                <div>
+									                    Town
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('address_main_post_town') %>
+									                </div>
+									            </div>
+								            <% } %>
+
+								            <% if(schedule.related('schedules:job').related('jobs:client').has('address_main_name')) { %>
+									            <div>
+									                <div>
+									                    Postcode
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('address_main_name') %>
+									                </div>
+									            </div>
+								            <% } %>
+								             <% if(schedule.related('schedules:job').related('jobs:client').has('address_main_country')) { %>
+									            <div>
+									                <div>
+									                    Country
+									                </div>
+									                <div>
+									                    <%= schedule.related('schedules:job').related('jobs:client').get('address_main_country') %>
+									                </div>
+									            </div>
+								            <% } %>
+								        </div>
+								    </div>
+
+
+								    <div class="widget widget widget-green">
+								        <h2>
+								            <i class="fa fa-th-list"></i>
+								            Delivery Address
+								        </h2>
+								        <div class="details">
+									         <% if(schedule.related('schedules:job').related('jobs:sales_order').has('company')) { %>
+										            <div>
+										                <div>
+										                    Company
+										                </div>
+										                <div>
+										                    <%= schedule.related('schedules:job').related('jobs:sales_order').get('company') %>
+										                </div>
+										            </div>
+									        <% } %>
+
+									       	<% if(schedule.related('schedules:job').related('jobs:sales_order').has('street_address')) { %>
+										            <div>
+										                <div>
+										                    Street Address
+										                </div>
+										                <div>
+										                    <%
+											                    var array = schedule.related('schedules:job').related('jobs:sales_order').get('street_address').split("\r");
+											                     _.each(array, function(item) {
+										                    %>
+										                    	<%= item %> <br>
+										                    <% }) %>
+										                </div>
+										            </div>
+									         <% } %>
+								        </div>
+								    </div>
+								</div>
+							</div>
+                		<% } %>
+
+
+                		<% if(schedule.related('schedules:job').related('jobs:client').related('clients:client_contacts')) { %>
+                			<div class="row">
+		                		<div class="col-md-12">
+								    <div class="widget widget-black">
+								        <h2>
+								            <i class="fa fa-th-list">
+								            </i>
+								            Contacts
+								        </h2>
+
+								        <table class="table">
+									    <thead>
+									        <tr>
+									            <th>
+									                Id
+									            </th>
+									            <th>
+									                Email
+									            </th>
+									            <th>
+									                Name
+									            </th>
+									            <th>
+									                Telephone
+									            </th>
+									        </tr>
+									    </thead>
+									    <tbody>
+									   	 <% _.each(schedule.related('schedules:job').related('jobs:client').related('clients:client_contacts').models, function(item) { %>
+									   	 	<% if(item.has('email')) { %>
+									        <tr>
+									            <td>
+									                <%= item.get('id') %>
+									            </td>
+
+									            <td>
+									                <%= item.get('email') %>
+									            </td>
+									            <td>
+									                <%= item.get('first_name') %>  <%= item.get('last_name') %>
+									            </td>
+									            <td>
+									                <%= item.get('telephone') %>
+									            </td>
+									        </tr>
+									        <% } %>
+									      <% }); %>
+									    </tbody>
+									</table>
+								    </div>
+
+								</div>
+							</div>
+        					
+                		<% } %>
+                </div>
+
+                <div class="tabSection additional">
+        			<h3 style="margin-bottom:20px;">Attached Contacts</h3>
+
+        			<table class="table">
+					    <thead>
+					      <tr>
+					        <th>Name</th>
+					        <th>Email</th>
+					        <th>Telephone</th>
+					        <th>Address</th>
+					      </tr>
+					    </thead>
+					    <tbody>
+					      	<% _.each(schedule.related('schedules:schedules_additional').models, function(additional) { %>
+		             			<tr>
+		             				<td>
+		             					<%= additional.related('schedules_additional:client_contact').get('first_name') %>
+		             					<%= additional.related('schedules_additional:client_contact').get('last_name') %>
+		             				</td>
+		             				<td>
+		             					<%= additional.related('schedules_additional:client_contact').get('email') %>
+		             				</td>
+		             				<td>
+		             					<%= additional.related('schedules_additional:client_contact').get('telephone') %>
+		             				</td>
+		             				<td>
+		             					<% if(additional.related('schedules_additional:client_contact').has('address_street')) {%>
+			             					<%= additional.related('schedules_additional:client_contact').get('address_street') %>
+			             					<br>
+		             					<% } %>
+		             					<% if(additional.related('schedules_additional:client_contact').has('address_town')) {%>
+			             					<%= additional.related('schedules_additional:client_contact').get('address_town') %>
+			             					<br>
+		             					<% } %>
+		             					<% if(additional.related('schedules_additional:client_contact').has('address_code')) { %>
+		             						<%= additional.related('schedules_additional:client_contact').get('address_code') %>
+		             					<% } %>
+		             				</td>
+		             			</tr>
+		             		<% }); %>
+					    </tbody>
+					  </table>
+                </div>
+            </div>
+            <div class="bbm-modal__bottombar">
+               <a href="" style="float: left" class="bbm-button deleteModal">Delete<i class="fa fa-exclamation-triangle"></i></a> <a href="" class="bbm-button saveModal">Close<i class="fa fa-thumbs-up"></i></a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<div class="wrapper">
+	<div class="topBlock">
+	</div>
+	<div class="outerBlock">
+	
+	</div>
+	<div class="clear"></div>
+	<div id="app_navigation"></div>
+	<div id="app_content"></div>
+</div>
